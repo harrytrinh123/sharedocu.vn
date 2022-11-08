@@ -97,12 +97,18 @@ def delete(id):
 @app.route('/')
 @app.route('/index')
 def index():
-    return render_template('index.html')
+    list_product = PRODUCT.query.all()
+    return render_template('index.html', list_product = list_product)
 
-@app.route('/productdetail/<product_id>')
+
+
+
+@app.route('/productdetail/<int:product_id>')
 def productdetail(product_id):
-    return render_template('productdetail.html')
+    product = PRODUCT.query.get(product_id)  
+    return render_template('productdetail.html', product = product)
 
 if __name__ == '__main__':
+   
     print('test')
     
