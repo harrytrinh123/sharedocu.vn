@@ -103,12 +103,14 @@ def index():
 
 
 
-@app.route('/productdetail/<int:product_id>')
+@app.route('/productdetail/<product_id>')
 def productdetail(product_id):
     product = PRODUCT.query.get(product_id)  
-    return render_template('productdetail.html', product = product)
+    userId  = product.UserId
+    user = USER.query.get(userId)
+    return render_template('productdetail.html', product = product, user = user)
 
 if __name__ == '__main__':
-   
+    app.run(debug=True)
     print('test')
     

@@ -31,13 +31,14 @@
         </div>
       </div>
       <div class="product-content">
-        <a href="#" class="product-title">{{item["Name"]}}</a>
-        <p class="author"><span>{{ item["Description"] }}</span></p>
-        
+        <a href="/productdetail/{{item['Id']}}" class="product-title">{{item["Name"]}}</a>
+        <!-- <p class="author"><span>{{ item["Description"] }}</span></p> -->
         
       </div>
     </div>
+
   </div>
+  
   </div>
   {% endfor %}
 </body>
