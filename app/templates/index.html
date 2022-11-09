@@ -5,9 +5,40 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
+  <link rel="stylesheet" href="../static/index.css">
+  <script src="../static/assets/index.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 <body>
   Home
   <a href="http://127.0.0.1:5000/productmanage">Go to product manage</a>
+
+
+
+  <div class="title">
+    <h1>DANH SÁCH SẢN PHẨM</h1>
+  </div>
+  {% for item in list_product %}
+  <div class="product">
+    <!-- <div class="product-container"> -->
+    <div class="product-item">
+      <div class="product-img">
+        <!-- <img src="http://via.placeholder.com/242x368" alt=""> -->
+        <img src = "static/images/products/{{ item['ImageUrl'] }}"  alt="">
+        <div>
+          <button type="button" class="add-btn"><a class = "to_detail" href = "/productdetail/{{item['Id']}}">Xem chi tiết</a></button>
+        </div>
+      </div>
+      <div class="product-content">
+        <a href="#" class="product-title">{{item["Name"]}}</a>
+        <p class="author"><span>{{ item["Description"] }}</span></p>
+        
+        
+      </div>
+    </div>
+  </div>
+  </div>
+  {% endfor %}
 </body>
 </html>
