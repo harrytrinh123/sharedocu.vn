@@ -1,5 +1,5 @@
 import os
-from flask import render_template, request, redirect, url_for, session
+from flask import render_template, request, redirect, url_for, session, flash
 from app import app, db, bcrypt
 from app.models import *
 from sqlalchemy.exc import IntegrityError
@@ -94,11 +94,14 @@ def allowed_image(filename):
 def productmanage():
     # Get username from session
     user_id = session.get('userid')
-    entries = PRODUCT.query.filter_by(UserId=user_id)
+    entries = PRODUCT.query.filter_by(UserId=int(user_id)).all()
     return render_template('productmanage.html', entries=entries)
 
 @app.route('/add', methods=['POST'])
+@login_required
 def add():
+    user_id = session.get('userid')
+    print(user_id)
     if request.method == 'POST':
         form = request.form
         name = form.get('name')
@@ -111,7 +114,7 @@ def add():
         if allowed_image(image.filename) and (not name or description):
             filename = secure_filename(image.filename)
             try:
-                entry = PRODUCT(Name = name, Description = description, ImageUrl = filename, Status=1, Surcharge=0)
+                entry = PRODUCT(Name = name, Description = description, ImageUrl = filename, Status=1, Surcharge=0, UserId=user_id)
                 db.session.add(entry)
                 db.session.commit()
                 image.save(app.config["IMAGE_UPLOADS"] +'\\'+ filename)
@@ -123,6 +126,7 @@ def add():
     return "Something went wrong"
 
 @app.route('/update/<int:id>')
+@login_required
 def updateRoute(id):
     if not id or id != 0:
         entry = PRODUCT.query.get(id)
@@ -132,6 +136,7 @@ def updateRoute(id):
     return "Something went wrong"
 
 @app.route('/update/<int:id>', methods=['POST'])
+@login_required
 def update(id):
     if not id or id != 0:
         entry = PRODUCT.query.get(id)
@@ -149,6 +154,7 @@ def update(id):
 
 
 @app.route('/delete/<int:id>')
+@login_required
 def delete(id):
     if not id or id != 0:
         entry = PRODUCT.query.get(id)
@@ -159,16 +165,21 @@ def delete(id):
 
     return "Something went wrong"
 
-# @app.route('/turn/<int:id>')
-# def turn(id):
-#     if not id or id != 0:
-#         entry = Entry.query.get(id)
-#         if entry:
-#             entry.status = not entry.status
-#             db.session.commit()
-#         return redirect('/')
+@app.route('/turn/<int:id>')
+def turn(id):
+    if not id or id != 0:
+        entry = PRODUCT.query.get(id)
+        if entry:
+            if entry.Status==1:
+                entry.Status = 2
+            elif entry.Status==2:
+                entry.Status = 3
+            else:
+                entry.Status = 1
+            db.session.commit()
+        return redirect('/productmanage')
 
-#     return "of the jedi"
+    return "Something went wrong"
 # ================================= END PRODUCT HOANG ======================================
 
 @app.route('/')

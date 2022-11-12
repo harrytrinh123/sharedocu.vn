@@ -59,11 +59,27 @@
                     <td><strong>{{ entry.Name }}</strong></td>
                     <td>{{ entry.Description }}</td>
                     <td>{{ entry.CategoryId }}</td>
-                    <td>{{ entry.Status }}</td>
+                    <td class="
+                        {% if entry.Status==1 %}
+                            btn-success
+                        {% elif entry.Status==2 %}
+                            btn-warning
+                        {% else %}
+                            btn-danger
+                        {% endif %}
+                    ">
+                        {% if entry.Status==1 %}
+                            Đang có sẵn
+                        {% elif entry.Status==2 %}
+                            Chờ người lấy
+                        {% else %}
+                            Đã cho
+                        {% endif %}
+                    </td>
                     <td>
-                        <a class="{{ 'btn btn-success' if entry.status else 'btn btn-dark'}}"
+                        <a class="btn btn-dark"
                            href="/turn/{{ entry.Id }}">
-                            Gave
+                            Change status
                         </a>
                         <a class="btn btn-danger"
                            href="/delete/{{ entry.Id }}">
