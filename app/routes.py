@@ -1,9 +1,83 @@
 import os
-from flask import render_template, request, redirect, flash
-from app import app, db
+from flask import render_template, request, redirect, url_for, session
+from app import app, db, bcrypt
 from app.models import *
 from sqlalchemy.exc import IntegrityError
 from werkzeug.utils import secure_filename
+from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
+from flask_wtf import FlaskForm
+from wtforms.fields import StringField, PasswordField, SubmitField
+from wtforms.validators import InputRequired, Length, ValidationError
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+@login_manager.user_loader
+def load_user(id):
+    return USER.query.get(int(id))
+
+# ================== Authentication Hoang =====================
+class RegisterForm(FlaskForm):
+    username = StringField(validators=[
+                           InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
+
+    password = PasswordField(validators=[
+                             InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
+
+    submit = SubmitField('Register')
+
+    def validate_username(self, username):
+        existing_user_username = USER.query.filter_by(
+            UserName=username.data).first()
+        if existing_user_username:
+            raise ValidationError(
+                'That username already exists. Please choose a different one.')
+
+class LoginForm(FlaskForm):
+    username = StringField(validators=[
+                           InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
+
+    password = PasswordField(validators=[
+                             InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
+
+    submit = SubmitField('Login')
+
+
+@ app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegisterForm()
+    print(form.password.data)
+    print(form.username.data)
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data)
+        new_user = USER(UserName=form.username.data, Password=hashed_password)
+        db.session.add(new_user)
+        db.session.commit()
+        return redirect(url_for('login'))
+
+    return render_template('register.html', form=form)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = USER.query.filter_by(UserName=form.username.data).first()
+        if user:
+            if bcrypt.check_password_hash(user.Password, form.password.data):
+                login_user(user)
+                # Add username to session
+                session['userid'] = user.id
+                return redirect(url_for('index'))
+    return render_template('login.html', form=form)
+
+@app.route('/logout', methods=['GET', 'POST'])
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
+#=================== End Authentication Hoang =================
 
 # ================== PRODUCT Hoang ============================
 def allowed_image(filename):
@@ -16,8 +90,11 @@ def allowed_image(filename):
         return False
 
 @app.route('/productmanage')
+@login_required
 def productmanage():
-    entries = PRODUCT.query.all()
+    # Get username from session
+    user_id = session.get('userid')
+    entries = PRODUCT.query.filter_by(UserId=user_id)
     return render_template('productmanage.html', entries=entries)
 
 @app.route('/add', methods=['POST'])
