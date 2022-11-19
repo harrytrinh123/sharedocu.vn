@@ -151,8 +151,6 @@ def update(id):
 
     return "Something went wrong"
 
-
-
 @app.route('/delete/<int:id>')
 @login_required
 def delete(id):
@@ -185,12 +183,13 @@ def turn(id):
 @login_required
 def changestatus(id):
     user_id = session.get('userid')
+    user_name = USER.query.get(user_id).UserName
     if not id or id != 0:
         entry = PRODUCT.query.get(id)
         if entry:
             if entry.Status==1:
                 entry.Status = 2
-                entry.Receiver = user_id
+                entry.Receiver = user_name
             elif entry.Status==2:
                 entry.Status = 1
                 entry.Receiver = 0
@@ -213,7 +212,35 @@ def productdetail(product_id):
     userId  = product.UserId
     user = USER.query.get(userId)
     return render_template('productdetail.html', product = product, user = user)
+# update user
+@app.route('/updateuser')
+@login_required
+def updateUser():
+    id = session.get('userid')
+    if not id or id != 0:
+        entry = USER.query.get(id)
+        if entry:
+            return render_template('updateuser.html', entry=entry)
 
+    return "Something went wrong"
+
+@app.route('/updateuser', methods=['POST'])
+@login_required
+def updateU():
+    id = session.get('userid')
+    if not id or id != 0:
+        entry = USER.query.get(id)
+        if entry:
+            form = request.form
+            address = form.get('address')
+            phonenum = form.get('phonenumber')
+            entry.Address = address
+            entry.PhoneNumber = phonenum
+            db.session.commit()
+        return redirect('/updateuser')
+
+    return "Something went wrong"
+#  end update user
 if __name__ == '__main__':
     app.run(debug=True)
     print('test')

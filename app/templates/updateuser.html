@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <form action="/updateuser" method="post">
+                        <h6>User name: {{ entry.UserName }}</h6>
+                        Địa chỉ
+                        <div class="form-group">
+                            <input class="form-control" type="text" name="address" placeholder="Address" value="{{ entry.Address }}" required>
+                        </div>
+                        Số điện thoại
+                        <div class="form-group">
+                          <input class="form-control" type="text" name="phonenumber" placeholder="PhoneNumber" value="{{ entry.PhoneNumber }}" required>
+                        </div>
+                        <button class="btn btn-primary" type="submit">
+                            Update
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+
+
+
