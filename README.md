@@ -22,9 +22,6 @@
 - pip install -r requirements.txt
 ```
 ```
-- export FLASK_APP=crudapp.py
-```
-```
 - flask db init
 ```
 ```
