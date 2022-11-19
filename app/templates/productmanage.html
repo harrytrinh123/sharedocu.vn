@@ -46,6 +46,7 @@
                         <th>Mô tả</th>
                         <th>Nhóm</th>
                         <th>Tình trạng</th>
+                        <th>Người lấy</th>
                         <th>#</th>
                     </tr>
                 </thead>
@@ -76,6 +77,7 @@
                             Đã cho
                         {% endif %}
                     </td>
+                    <td>{{ entry.Receiver }}</td>
                     <td>
                         <a class="btn btn-dark"
                            href="/turn/{{ entry.Id }}">
