@@ -87,13 +87,16 @@
           <li>Phân loại: <span>{{product.CategoryId}}</span></li>
         </ul>
       </div>
-
       <div class="purchase-info">
-        <!-- <input type = "number" min = "0" value = "1"> -->
-        <button type="button" class="btn">
-          Mong muốn nhận!
-        </button>
-        <!-- <button type = "button" class = "btn">Thông tin người cho</button> -->
+        <a class="btn {% if product.Status==1 %} btn-primary {% elif product.Status==2 %} btn-danger {% endif %}" href="/changestatus/{{ product.Id }}">
+            {% if product.Status==1 %}
+            Mong muốn nhận
+            {% elif product.Status==2 %}
+            Không muốn nhận nữa
+            {% elif product.Status==3 %}
+            Đã cho
+            {% endif %}
+        </a>
       </div>
 
       <!-- ------------------------------------------------- Thông tin người cho--------------------------------------- -->

@@ -30,6 +30,7 @@ class PRODUCT(db.Model):
     ImageUrl = db.Column(db.String)
     Status = db.Column(db.Integer)
     Surcharge = db.Column(db.Integer)
+    Receiver = db.Column(db.Integer)
     UserId = db.Column(db.Integer, db.ForeignKey(USER.id))
     CategoryId = db.Column(db.Integer, db.ForeignKey(CATEGORY.Id))
     CityId = db.Column(db.Integer, db.ForeignKey(CITY.Id))

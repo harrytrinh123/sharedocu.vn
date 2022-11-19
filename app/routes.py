@@ -180,6 +180,22 @@ def turn(id):
         return redirect('/productmanage')
 
     return "Something went wrong"
+
+@app.route('/changestatus/<int:id>')
+@login_required
+def changestatus(id):
+    user_id = session.get('userid')
+    if not id or id != 0:
+        entry = PRODUCT.query.get(id)
+        if entry:
+            if entry.Status==1:
+                entry.Status = 2
+                entry.Receiver = user_id
+            elif entry.Status==2:
+                entry.Status = 1
+                entry.Receiver = 0
+            db.session.commit()
+        return redirect('/productdetail/' + str(id))
 # ================================= END PRODUCT HOANG ======================================
 
 @app.route('/')
